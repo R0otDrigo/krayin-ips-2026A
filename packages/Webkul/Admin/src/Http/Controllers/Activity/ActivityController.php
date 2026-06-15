@@ -68,14 +68,15 @@ class ActivityController extends Controller
      */
     public function store(): RedirectResponse|JsonResponse
     {
-        $requiredScheduleRule = 'required_unless:type,note,file|date';
+        $scheduleFromRule = 'required_unless:type,note,file|date';
+        $scheduleToRule = 'required_unless:type,note,file|date|after_or_equal:schedule_from';
 
         $validatedData = $this->validate(request(), [
             'type' => 'required|in:call,meeting,lunch,note,file',
             'title' => 'required_unless:type,note,file|max:80',
             'comment' => 'required_if:type,note|max:500',
-            'schedule_from' => $requiredScheduleRule,
-            'schedule_to' => $requiredScheduleRule.'|after_or_equal:schedule_from',
+            'schedule_from' => $scheduleFromRule,
+            'schedule_to' => $scheduleToRule,
             'location' => 'nullable|string|max:255',
             'file' => 'required_if:type,file',
             'lead_id' => 'nullable|integer|exists:leads,id',
