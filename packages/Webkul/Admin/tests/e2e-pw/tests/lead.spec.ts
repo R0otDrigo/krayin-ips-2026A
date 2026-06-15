@@ -235,6 +235,8 @@ test.describe("lead management", () => {
     await adminPage.locator('input[name="schedule_to"]').fill(getRandomDateTime());
     await adminPage.locator('input[name="location"]').fill('call');
     await adminPage.getByRole('button', { name: 'Save Activity' }).click();
+
+    await expect(adminPage.getByText('Activity created successfully.')).toBeVisible();
   });
 
   test("should able to add meeting activity in lead", async ({ adminPage }) => {
@@ -258,6 +260,8 @@ test.describe("lead management", () => {
     await adminPage.locator('input[name="schedule_to"]').fill(getRandomDateTime());
     await adminPage.locator('input[name="location"]').fill('Google meet');
     await adminPage.getByRole('button', { name: 'Save Activity' }).click();
+
+    await expect(adminPage.getByText('Activity created successfully.')).toBeVisible();
   });
 
   test("should able to add lunch activity in lead", async ({ adminPage }) => {

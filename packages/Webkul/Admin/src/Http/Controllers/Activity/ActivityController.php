@@ -68,12 +68,23 @@ class ActivityController extends Controller
      */
     public function store(): RedirectResponse|JsonResponse
     {
-        $this->validate(request(), [
-            'type' => 'required',
-            'comment' => 'required_if:type,note',
-            'schedule_from' => 'required_unless:type,note,file',
-            'schedule_to' => 'required_unless:type,note,file',
+        $validatedData = $this->validate(request(), [
+            'type' => 'required|in:call,meeting,lunch,note,file',
+            'title' => 'required_unless:type,note,file|max:80',
+            'comment' => 'required_if:type,note|nullable|max:500',
+            'schedule_from' => 'required_unless:type,note,file|date',
+            'schedule_to' => 'required_unless:type,note,file|date|after_or_equal:schedule_from',
+            'location' => 'nullable|string|max:255',
             'file' => 'required_if:type,file',
+            'lead_id' => 'nullable|integer|exists:leads,id',
+            'person_id' => 'nullable|integer|exists:persons,id',
+            'product_id' => 'nullable|integer|exists:products,id',
+            'warehouse_id' => 'nullable|integer|exists:warehouses,id',
+            'participants' => 'nullable|array',
+            'participants.users' => 'nullable|array',
+            'participants.users.*' => 'integer|exists:users,id',
+            'participants.persons' => 'nullable|array',
+            'participants.persons.*' => 'integer|exists:persons,id',
         ]);
 
         if (request('type') === 'meeting') {
@@ -81,9 +92,9 @@ class ActivityController extends Controller
              * Check if meeting is overlapping with other meetings.
              */
             $isOverlapping = $this->activityRepository->isDurationOverlapping(
-                request()->input('schedule_from'),
-                request()->input('schedule_to'),
-                request()->input('participants'),
+                $validatedData['schedule_from'] ?? null,
+                $validatedData['schedule_to'] ?? null,
+                $validatedData['participants'] ?? null,
                 request()->input('id')
             );
 
@@ -102,7 +113,7 @@ class ActivityController extends Controller
 
         Event::dispatch('activity.create.before');
 
-        $activity = $this->activityRepository->create(array_merge(request()->all(), [
+        $activity = $this->activityRepository->create(array_merge($validatedData, [
             'is_done' => request('type') == 'note' ? 1 : 0,
             'user_id' => auth()->guard('user')->user()->id,
         ]));
