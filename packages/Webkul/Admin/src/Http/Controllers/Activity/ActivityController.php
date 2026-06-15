@@ -95,8 +95,8 @@ class ActivityController extends Controller
              * Check if meeting is overlapping with other meetings.
              */
             $isOverlapping = $this->activityRepository->isDurationOverlapping(
-                $validatedData['schedule_from'] ?? null,
-                $validatedData['schedule_to'] ?? null,
+                $validatedData['schedule_from'],
+                $validatedData['schedule_to'],
                 $validatedData['participants'] ?? null,
                 request()->input('id')
             );
