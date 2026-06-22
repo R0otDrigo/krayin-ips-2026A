@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krayin CRM · Scrum & DevOps · EPIS-UNSA 2026-A</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void: #03050f;
+    --deep: #07091a;
+    --nebula-blue: #0d1b3e;
+    --nebula-purple: #1a0b35;
+    --star-white: #e8f0ff;
+    --cyan: #00e5ff;
+    --violet: #7c3aed;
+    --indigo: #4f46e5;
+    --magenta: #e040fb;
+    --gold: #fbbf24;
+    --text-dim: rgba(200,215,255,0.55);
+    --text-mid: rgba(200,215,255,0.8);
+    --text-bright: #e8f0ff;
+    --card-bg: rgba(13,27,62,0.55);
+    --card-border: rgba(0,229,255,0.18);
+    --glow-cyan: 0 0 30px rgba(0,229,255,0.4);
+    --glow-violet: 0 0 30px rgba(124,58,237,0.45);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--text-bright);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── CANVAS GALAXY ── */
+  #galaxy { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px;
+    height: 64px;
+    background: rgba(3,5,15,0.75);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(0,229,255,0.1);
+  }
+  .nav-brand {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px; font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 13px; font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+
+  /* ── SECTIONS ── */
+  main { position: relative; z-index: 1; }
+  section { padding: 120px 40px; max-width: 1180px; margin: 0 auto; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    padding-top: 80px;
+  }
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: ''; display: block; height: 1px; width: 48px;
+    background: linear-gradient(90deg, transparent, var(--cyan));
+  }
+  .hero-eyebrow::after { transform: scaleX(-1); }
+  .hero-title {
+    font-size: clamp(42px, 7vw, 86px);
+    font-weight: 700; line-height: 1.05;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--violet) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .hero-sub {
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 300; color: var(--text-mid);
+    margin-bottom: 20px; letter-spacing: 0.01em;
+  }
+  .hero-meta {
+    font-family: 'Space Mono', monospace; font-size: 12px;
+    color: var(--text-dim); letter-spacing: 0.1em;
+    margin-bottom: 56px;
+  }
+  .hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+  }
+  .btn-primary, .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; text-decoration: none;
+    transition: all .25s; cursor: pointer; border: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    color: #fff;
+    box-shadow: 0 0 32px rgba(79,70,229,0.45);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 48px rgba(79,70,229,0.65); }
+  .btn-ghost {
+    background: transparent; color: var(--cyan);
+    border: 1px solid rgba(0,229,255,0.35);
+  }
+  .btn-ghost:hover { background: rgba(0,229,255,0.08); border-color: var(--cyan); }
+
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--text-dim); font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  .scroll-hint svg { opacity: .5; }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* ── SECTION HEADER ── */
+  .s-label {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 12px;
+  }
+  .s-title {
+    font-size: clamp(28px, 4vw, 44px); font-weight: 700;
+    line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--text-bright); margin-bottom: 16px;
+  }
+  .s-desc { color: var(--text-dim); font-size: 16px; line-height: 1.7; max-width: 620px; }
+
+  /* ── SPRINT TIMELINE ── */
+  #sprints { padding: 100px 40px; }
+  .sprint-header { text-align: center; margin-bottom: 72px; }
+  .sprint-header .s-desc { margin: 0 auto; }
+
+  .timeline { position: relative; display: flex; flex-direction: column; gap: 0; }
+  .timeline::before {
+    content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+    width: 1px; background: linear-gradient(to bottom, transparent, var(--cyan), var(--violet), transparent);
+    transform: translateX(-50%);
+  }
+
+  .sprint-card {
+    position: relative; width: calc(50% - 48px);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 32px 28px;
+    cursor: pointer;
+    transition: all .3s;
+    backdrop-filter: blur(12px);
+    margin-bottom: 48px;
+  }
+  .sprint-card:hover {
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+    transform: translateY(-4px);
+  }
+  .sprint-card:nth-child(odd) { align-self: flex-start; margin-left: 0; }
+  .sprint-card:nth-child(even) { align-self: flex-end; margin-right: 0; }
+
+  .sprint-dot {
+    position: absolute; top: 32px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--cyan); box-shadow: 0 0 16px var(--cyan);
+    border: 3px solid var(--deep);
+  }
+  .sprint-card:nth-child(odd) .sprint-dot { right: -55px; }
+  .sprint-card:nth-child(even) .sprint-dot { left: -55px; }
+
+  .sprint-num {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: 0.2em; color: var(--cyan); margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .sprint-name { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .sprint-date { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; font-family: 'Space Mono', monospace; }
+  .sprint-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .tag {
+    padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .tag-blue { background: rgba(79,70,229,0.25); color: #a5b4fc; border: 1px solid rgba(79,70,229,0.4); }
+  .tag-cyan { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid rgba(0,229,255,0.3); }
+  .tag-violet { background: rgba(124,58,237,0.2); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.4); }
+  .tag-gold { background: rgba(251,191,36,0.15); color: var(--gold); border: 1px solid rgba(251,191,36,0.35); }
+  .sprint-desc { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+  .sprint-click-hint {
+    margin-top: 16px; font-size: 11px; color: var(--cyan); opacity: .7;
+    display: flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace;
+  }
+
+  /* ── SCRUM FLOW DIAGRAM ── */
+  #scrum-flow { padding: 100px 40px; text-align: center; }
+  .flow-diagram-wrap {
+    margin-top: 48px; border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--card-border);
+    position: relative;
+    box-shadow: 0 0 80px rgba(0,229,255,0.08), 0 0 160px rgba(124,58,237,0.06);
+  }
+  .flow-diagram-wrap img {
+    width: 100%; display: block;
+    filter: brightness(0.9) saturate(1.1);
+  }
+  .flow-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(3,5,15,0.05), rgba(3,5,15,0.25));
+  }
+
+  /* ── TEAM ── */
+  #team { padding: 100px 40px; }
+  .team-header { text-align: center; margin-bottom: 64px; }
+  .team-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .member-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 28px 20px; text-align: center;
+    backdrop-filter: blur(12px);
+    transition: all .3s; position: relative; overflow: hidden;
+  }
+  .member-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(0,229,255,0.06), transparent 70%);
+    opacity: 0; transition: opacity .3s;
+  }
+  .member-card:hover { border-color: rgba(0,229,255,0.4); box-shadow: var(--glow-cyan); transform: translateY(-4px); }
+  .member-card:hover::before { opacity: 1; }
+  .member-avatar {
+    width: 68px; height: 68px; border-radius: 50%; margin: 0 auto 16px;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 700; color: #fff;
+    border: 2px solid rgba(0,229,255,0.3);
+    box-shadow: 0 0 20px rgba(124,58,237,0.3);
+    position: relative; z-index: 1;
+  }
+  .member-name { font-size: 14px; font-weight: 600; color: var(--text-bright); margin-bottom: 6px; line-height: 1.3; }
+  .member-pct {
+    font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+    color: var(--cyan);
+  }
+  .member-pct.lead { color: var(--gold); }
+  .member-role {
+    font-size: 11px; color: var(--text-dim); margin-top: 6px; letter-spacing: 0.05em;
+  }
+
+  /* ── TOOLS ── */
+  #tools { padding: 80px 40px; }
+  .tools-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px; margin-top: 48px;
+  }
+  .tool-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 24px; backdrop-filter: blur(12px);
+    transition: all .25s;
+  }
+  .tool-card:hover { border-color: rgba(0,229,255,0.3); box-shadow: 0 0 20px rgba(0,229,255,0.12); }
+  .tool-icon { font-size: 28px; margin-bottom: 12px; }
+  .tool-name { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .tool-desc { font-size: 13px; color: var(--text-dim); line-height: 1.55; }
+
+  /* ── HITOS / MILESTONES ── */
+  #hitos { padding: 100px 40px; }
+  .hitos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+  .hito-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 32px 24px; backdrop-filter: blur(12px);
+    position: relative; overflow: hidden; cursor: pointer;
+    transition: all .3s;
+  }
+  .hito-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .hito-card.h1::after { background: linear-gradient(90deg, var(--indigo), var(--cyan)); }
+  .hito-card.h2::after { background: linear-gradient(90deg, var(--violet), var(--magenta)); }
+  .hito-card.h3::after { background: linear-gradient(90deg, var(--gold), #f97316); }
+  .hito-card:hover { transform: translateY(-6px); }
+  .hito-card.h1:hover { box-shadow: 0 0 40px rgba(79,70,229,0.3); border-color: var(--indigo); }
+  .hito-card.h2:hover { box-shadow: 0 0 40px rgba(228,64,251,0.25); border-color: var(--magenta); }
+  .hito-card.h3:hover { box-shadow: 0 0 40px rgba(251,191,36,0.25); border-color: var(--gold); }
+  .hito-n { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase; }
+  .hito-pct { font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 8px; }
+  .h1 .hito-pct { color: var(--cyan); }
+  .h2 .hito-pct { color: var(--magenta); }
+  .h3 .hito-pct { color: var(--gold); }
+  .hito-date { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .hito-body { font-size: 13px; color: var(--text-dim); line-height: 1.55; }
+  .hito-weight { margin-top: 16px; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; background: rgba(255,255,255,0.05); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 48px 40px;
+    border-top: 1px solid rgba(0,229,255,0.08);
+    color: var(--text-dim); font-size: 13px;
+  }
+  footer .f-logo { font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: var(--cyan); margin-bottom: 8px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(3,5,15,0.85); backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; opacity: 0; pointer-events: none;
+    transition: opacity .3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: linear-gradient(135deg, #0b0f28 0%, #10072a 100%);
+    border: 1px solid rgba(0,229,255,0.25);
+    border-radius: 20px; padding: 40px;
+    max-width: 640px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 0 80px rgba(0,229,255,0.15), 0 0 160px rgba(124,58,237,0.1);
+    transform: scale(0.95); transition: transform .3s;
+    position: relative;
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(255,255,255,0.06); border: none; color: var(--text-dim);
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .modal-close:hover { background: rgba(0,229,255,0.15); color: var(--cyan); }
+  .modal-eyebrow { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--cyan); text-transform: uppercase; margin-bottom: 10px; }
+  .modal-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .modal-date { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; font-family: 'Space Mono', monospace; }
+  .modal-section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--cyan); margin: 20px 0 10px; }
+  .modal-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .modal-list li { font-size: 14px; color: var(--text-mid); display: flex; gap: 10px; align-items: flex-start; line-height: 1.55; }
+  .modal-list li::before { content: '→'; color: var(--cyan); flex-shrink: 0; margin-top: 1px; }
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .modal-scrum-master { margin-top: 20px; padding: 16px; border-radius: 10px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); }
+  .modal-scrum-master-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; font-family: 'Space Mono', monospace; }
+  .modal-scrum-master-name { font-size: 16px; font-weight: 600; color: var(--cyan); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    position: relative; z-index: 1;
+    height: 1px; max-width: 1180px; margin: 0 auto;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.15), transparent);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section, #sprints, #hitos, #tools, #team, #scrum-flow { padding: 80px 20px; }
+    .hitos-grid { grid-template-columns: 1fr; }
+    .timeline::before { left: 24px; }
+    .sprint-card { width: calc(100% - 48px); align-self: flex-end !important; margin-right: 0 !important; }
+    .sprint-card .sprint-dot { left: -43px !important; right: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="galaxy"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Krayin CRM · IPS 2026-A</div>
+  <div class="nav-links">
+    <a href="#hitos">Hitos</a>
+    <a href="#scrum-flow">Flujo Scrum</a>
+    <a href="#sprints">Sprints</a>
+    <a href="#team">Equipo</a>
+    <a href="#tools">Herramientas</a>
+  </div>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-eyebrow">EPIS-UNSA &nbsp;·&nbsp; Semestre 2026-A &nbsp;·&nbsp; Prof. Robert Arisaca</div>
+    <h1 class="hero-title">Krayin CRM</h1>
+    <p class="hero-sub">Scrum & DevOps aplicado a un producto open source</p>
+    <p class="hero-meta">Ingeniería y Procesos de Software &nbsp;·&nbsp; Equipo de 5 integrantes</p>
+    <div class="hero-cta">
+      <a href="#hitos" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Ver hitos del proyecto
+      </a>
+      <a href="#scrum-flow" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Flujo Scrum
+      </a>
+    </div>
+    <div class="scroll-hint">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10l5 5 5-5"/></svg>
+      Explorar
+    </div>
+  </section>
+
+  <!-- HITOS -->
+  <div class="divider"></div>
+  <section id="hitos" style="max-width:1180px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div class="s-label">Entregables</div>
+      <h2 class="s-title">Hitos del Proyecto</h2>
+      <p class="s-desc" style="margin:0 auto;">Tres momentos clave que marcan el avance del proceso ágil integrado con DevOps.</p>
+    </div>
+    <div class="hitos-grid">
+      <div class="hito-card h1" onclick="openModal('h1')">
+        <div class="hito-n">Hito 01</div>
+        <div class="hito-pct">15%</div>
+        <div class="hito-date">13 · MAY · 2026</div>
+        <div class="hito-body">Sprint 0: Plan de proyecto, cronograma y presentación del producto open source seleccionado.</div>
+        <div class="hito-weight">Peso: 65% sobre EC1</div>
+        <div style="margin-top:16px;font-size:11px;color:var(--cyan);font-family:'Space Mono',monospace;">VER DETALLE →</div>
+      </div>
+      <div class="hito-card h2" onclick="openModal('h2')">
+        <div class="hito-n">Hito 02</div>
+        <div class="hito-pct">60%</div>
+        <div class="hito-date">10 · JUN · 2026</div>
+        <div class="hito-body">Sprints 1–2: Software funcionando con integración CI/CD y marco ágil Scrum completo.</div>
+        <div class="hito-weight">Peso: 85% sobre EC2</div>
+        <div style="margin-top:16px;font-size:11px;color:var(--magenta);font-family:'Space Mono',monospace;">VER DETALLE →</div>
+      </div>
+      <div class="hito-card h3" onclick="openModal('h3')">
+        <div class="hito-n">Hito 03</div>
+        <div class="hito-pct">100%</div>
+        <div class="hito-date">13 · JUL · 2026</div>
+        <div class="hito-body">Sprints 3–4: Mejoras con despliegue CI/CD automatizado, documentación IEEE y presentación final.</div>
+        <div class="hito-weight">Peso: 100% sobre EC3</div>
+        <div style="margin-top:16px;font-size:11px;color:var(--gold);font-family:'Space Mono',monospace;">VER DETALLE →</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRUM FLOW DIAGRAM -->
+  <div class="divider"></div>
+  <section id="scrum-flow" style="max-width:1180px;margin:0 auto;">
+    <div class="sprint-header">
+      <div class="s-label">Metodología</div>
+      <h2 class="s-title">Flujo Scrum – Krayin CRM</h2>
+      <p class="s-desc" style="margin:0 auto;">Simulación de implementación ágil del proyecto sobre el ciclo completo: Product Backlog → Sprint Planning → Ejecución → Review → Retrospective.</p>
+    </div>
+    <div class="flow-diagram-wrap">
+      <img src="1782142927904_image.png" alt="Flujo Scrum Krayin CRM" />
+      <div class="flow-overlay"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:24px;">
+      <div style="text-align:center;padding:20px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;">
+        <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px;font-family:'Space Mono',monospace;">Sprints</div>
+        <div style="font-size:28px;font-weight:700;color:var(--cyan);">4</div>
+        <div style="font-size:12px;color:var(--text-dim);">15 días c/u</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;">
+        <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px;font-family:'Space Mono',monospace;">Integrantes</div>
+        <div style="font-size:28px;font-weight:700;color:var(--violet);">5</div>
+        <div style="font-size:12px;color:var(--text-dim);">Rol rotativo de SM</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;">
+        <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px;font-family:'Space Mono',monospace;">Herramientas</div>
+        <div style="font-size:28px;font-weight:700;color:var(--gold);">5</div>
+        <div style="font-size:12px;color:var(--text-dim);">GitHub ecosystem</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;">
+        <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px;font-family:'Space Mono',monospace;">Proyecto</div>
+        <div style="font-size:28px;font-weight:700;color:var(--magenta);">MIT</div>
+        <div style="font-size:12px;color:var(--text-dim);">Licencia open source</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPRINTS TIMELINE -->
+  <div class="divider"></div>
+  <section id="sprints" style="max-width:1180px;margin:0 auto;">
+    <div class="sprint-header">
+      <div class="s-label">Iteraciones</div>
+      <h2 class="s-title">Sprints del Proyecto</h2>
+      <p class="s-desc" style="margin:0 auto;">Cada sprint de 15 días con rol de Scrum Master rotativo, ceremonias ágiles y entregables concretos.</p>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <!-- TEAM -->
+  <div class="divider"></div>
+  <section id="team" style="max-width:1180px;margin:0 auto;">
+    <div class="team-header">
+      <div class="s-label">Equipo</div>
+      <h2 class="s-title">Integrantes del Grupo</h2>
+      <p class="s-desc" style="margin:0 auto;">Cinco estudiantes de Ingeniería de Sistemas e Informática – EPIS, UNSA, comprometidos con el proceso ágil.</p>
+    </div>
+    <div class="team-grid" id="teamGrid"></div>
+  </section>
+
+  <!-- TOOLS -->
+  <div class="divider"></div>
+  <section id="tools" style="max-width:1180px;margin:0 auto;">
+    <div class="s-label">Stack</div>
+    <h2 class="s-title">Herramientas Utilizadas</h2>
+    <p class="s-desc">El ecosistema GitHub como columna vertebral del proceso Scrum + DevOps del proyecto.</p>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-icon">📋</div>
+        <div class="tool-name">GitHub Projects</div>
+        <div class="tool-desc">Tablero Kanban para gestionar el Product Backlog, armar Sprints y asignar historias de usuario. Visualización del progreso en tiempo real.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">⚙️</div>
+        <div class="tool-name">GitHub Actions</div>
+        <div class="tool-desc">Automatización CI/CD. Compila el código, corre las pruebas, detecta errores y despliega la app a staging automáticamente.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🌐</div>
+        <div class="tool-name">GitHub Pages</div>
+        <div class="tool-desc">Publica el entorno de staging, la documentación técnica del proyecto y el Burndown Chart generado por GitHub Actions.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🎫</div>
+        <div class="tool-name">GitHub Issues</div>
+        <div class="tool-desc">Registra las historias de usuario del Product Backlog, reporta bugs en testing y documenta decisiones técnicas del sprint.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📖</div>
+        <div class="tool-name">GitHub Wiki</div>
+        <div class="tool-desc">Documentación técnica centralizada del proyecto, arquitectura, decisiones de diseño y guías de implementación.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🐳</div>
+        <div class="tool-name">Docker Compose</div>
+        <div class="tool-desc">Infraestructura DevOps adaptable para facilitar la configuración del pipeline y el entorno de desarrollo reproducible.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="f-logo">Krayin CRM · EPIS-UNSA</div>
+  <p>Ingeniería y Procesos de Software · Semestre 2026-A · Prof. Robert Arisaca</p>
+  <p style="margin-top:6px;">Universidad Nacional de San Agustín · Arequipa, Perú</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ── GALAXY CANVAS ──
+const canvas = document.getElementById('galaxy');
+const ctx = canvas.getContext('2d');
+let W, H, stars = [], nebulae = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 320; i++) {
+    stars.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.8 + 0.2,
+      o: Math.random() * 0.7 + 0.2,
+      sp: Math.random() * 0.006 + 0.002,
+      ph: Math.random() * Math.PI * 2,
+      vx: (Math.random() - 0.5) * 0.08,
+      vy: (Math.random() - 0.5) * 0.08,
+    });
+  }
+  nebulae = [];
+  const cols = ['rgba(79,70,229,', 'rgba(0,229,255,', 'rgba(124,58,237,', 'rgba(228,64,251,'];
+  for (let i = 0; i < 6; i++) {
+    nebulae.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 300 + 150,
+      c: cols[Math.floor(Math.random() * cols.length)],
+      o: Math.random() * 0.07 + 0.02,
+    });
+  }
+}
+
+let t = 0;
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  // bg
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#03050f');
+  bg.addColorStop(0.5, '#07091a');
+  bg.addColorStop(1, '#0a050f');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  // nebulae
+  nebulae.forEach(n => {
+    const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+    g.addColorStop(0, n.c + n.o + ')');
+    g.addColorStop(1, n.c + '0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+  });
+  // stars
+  t += 0.012;
+  stars.forEach(s => {
+    s.x += s.vx; s.y += s.vy;
+    if (s.x < -2) s.x = W+2; if (s.x > W+2) s.x = -2;
+    if (s.y < -2) s.y = H+2; if (s.y > H+2) s.y = -2;
+    const pulse = s.o * (0.6 + 0.4 * Math.sin(t * s.sp * 100 + s.ph));
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(200,220,255,${pulse})`; ctx.fill();
+    if (s.r > 1.2) {
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r * 2.5, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(150,200,255,${pulse*0.15})`; ctx.fill();
+    }
+  });
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', () => { resize(); initStars(); });
+resize(); initStars(); draw();
+
+// ── DATA ──
+const SPRINTS = [
+  {
+    id: 's0', num: 'Sprint 0', name: 'Planificación Inicial',
+    date: 'Previo al 13 MAY 2026', hito: 'Hito 1',
+    sm: 'Rodrigo Estefanero Palma',
+    tags: [{l:'Planificación',c:'tag-blue'},{l:'GitHub Projects',c:'tag-cyan'},{l:'GitHub Pages',c:'tag-cyan'}],
+    desc: 'Reunión inicial para acuerdo de roles, configuración de repositorio y presentación del producto Krayin CRM ante el equipo.',
+    objectives: [
+      'Definir roles iniciales y estructura del equipo',
+      'Configurar repositorio GitHub y herramientas del proyecto',
+      'Seleccionar y presentar Krayin CRM como producto open source',
+      'Elaborar plan de proyecto y cronograma general',
+      'Configurar GitHub Projects con tablero Kanban inicial',
+      'Publicar primera versión de GitHub Pages',
+    ],
+    ceremonies: ['Sprint Planning (acuerdo de roles)', 'Sprint Review (presentación del plan)'],
+  },
+  {
+    id: 's1', num: 'Sprint 1', name: 'Primeras Historias de Usuario',
+    date: '13 MAY – 10 JUN 2026', hito: 'Hito 2',
+    sm: 'Ronald Camani Chambi',
+    tags: [{l:'Desarrollo',c:'tag-violet'},{l:'GitHub Issues',c:'tag-cyan'},{l:'CI/CD',c:'tag-gold'}],
+    desc: 'Implementación de las primeras historias de usuario sobre Krayin CRM. Verificación de avances y configuración inicial del pipeline CI/CD.',
+    objectives: [
+      'Implementar historias de usuario priorizadas del Product Backlog',
+      'Configurar pipeline básico con GitHub Actions',
+      'Registrar bugs y mejoras en GitHub Issues',
+      'Realizar Daily Scrum asíncronos vía GitHub',
+      'Ejecutar Sprint Review y Retrospective',
+      'Actualizar tablero Kanban con progreso real',
+    ],
+    ceremonies: ['Sprint Planning (día 1)', 'Daily Scrum (asíncrono)', 'Sprint Review (día 14)', 'Sprint Retrospective (día 15)'],
+  },
+  {
+    id: 's2', num: 'Sprint 2', name: 'Funcionalidades y CI/CD',
+    date: '10 JUN – 25 JUN 2026', hito: 'Hito 2',
+    sm: 'Diego Hans Schreiber Landeo',
+    tags: [{l:'DevOps',c:'tag-gold'},{l:'Testing',c:'tag-violet'},{l:'GitHub Actions',c:'tag-cyan'}],
+    desc: 'Demostración de funcionalidades implementadas. Integración completa del pipeline CI/CD. Actualización de documentación en GitHub Wiki y Pages.',
+    objectives: [
+      'Mostrar funcionalidades implementadas hasta el momento',
+      'Integrar CI/CD completo con GitHub Actions',
+      'Desplegar entorno de staging vía GitHub Pages',
+      'Documentar arquitectura en GitHub Wiki',
+      'Generar y publicar Burndown Chart automático',
+      'Refinar Product Backlog con nuevas historias',
+    ],
+    ceremonies: ['Sprint Planning', 'Daily Scrum asíncronos', 'Sprint Review en entorno staging', 'Sprint Retrospective'],
+  },
+  {
+    id: 's3', num: 'Sprint 3', name: 'Despliegue y Mejoras',
+    date: '25 JUN – 13 JUL 2026', hito: 'Hito 3',
+    sm: 'Solsol Choque Fernando Rafael',
+    tags: [{l:'Despliegue',c:'tag-gold'},{l:'CI/CD Completo',c:'tag-cyan'},{l:'Documentación',c:'tag-blue'}],
+    desc: 'Planteamiento del despliegue con CI/CD automatizado. Selección de servidores y mejoras al producto. Documentación técnica completa en formato IEEE.',
+    objectives: [
+      'Implementar despliegue automatizado con CI/CD completo',
+      'Seleccionar y configurar servidor de producción',
+      'Documentar todo el proceso ágil Scrum+DevOps',
+      'Redactar artículo final en formato IEEE',
+      'Preparar presentación del proyecto final',
+      'Publicar documentación completa en GitHub Pages',
+    ],
+    ceremonies: ['Sprint Planning', 'Daily Scrum asíncronos', 'Sprint Review final', 'Sprint Retrospective global'],
+  },
+];
+
+const TEAM = [
+  { name: 'Rodrigo\nEstefanero Palma', pct: '30%', init: 'RE', lead: true },
+  { name: 'Solsol Choque\nFernando Rafael', pct: '17.5%', init: 'SF' },
+  { name: 'Rodolfo\nSoria Soncco', pct: '17.5%', init: 'RS' },
+  { name: 'Diego Hans\nSchreiber Landeo', pct: '17.5%', init: 'DS' },
+  { name: 'Ronald Rodrigo\nCamani Chambi', pct: '17.5%', init: 'RC' },
+];
+
+// ── RENDER TIMELINE ──
+const tl = document.getElementById('timeline');
+SPRINTS.forEach((s, i) => {
+  const card = document.createElement('div');
+  card.className = 'sprint-card';
+  card.innerHTML = `
+    <div class="sprint-dot"></div>
+    <div class="sprint-num">${s.num} &nbsp;·&nbsp; ${s.hito}</div>
+    <div class="sprint-name">${s.name}</div>
+    <div class="sprint-date">${s.date}</div>
+    <div class="sprint-tags">${s.tags.map(t=>`<span class="tag ${t.c}">${t.l}</span>`).join('')}</div>
+    <div class="sprint-desc">${s.desc}</div>
+    <div class="sprint-click-hint">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Ver detalle del sprint
+    </div>
+  `;
+  card.onclick = () => openSprintModal(s);
+  tl.appendChild(card);
+});
+
+// ── RENDER TEAM ──
+const tg = document.getElementById('teamGrid');
+TEAM.forEach(m => {
+  const card = document.createElement('div');
+  card.className = 'member-card';
+  const names = m.name.split('\n');
+  card.innerHTML = `
+    <div class="member-avatar">${m.init}</div>
+    <div class="member-name">${names.join('<br>')}</div>
+    <div class="member-pct ${m.lead ? 'lead' : ''}">${m.pct}</div>
+    <div class="member-role">${m.lead ? '★ Mayor contribución' : 'Desarrollo & Testing'}</div>
+  `;
+  tg.appendChild(card);
+});
+
+// ── MODALS ──
+const overlay = document.getElementById('modalOverlay');
+const mbody = document.getElementById('modalBody');
+
+function openSprintModal(s) {
+  mbody.innerHTML = `
+    <div class="modal-eyebrow">${s.num} &nbsp;·&nbsp; ${s.hito}</div>
+    <div class="modal-title">${s.name}</div>
+    <div class="modal-date">📅 ${s.date}</div>
+    <div class="modal-tags">${s.tags.map(t=>`<span class="tag ${t.c}">${t.l}</span>`).join('')}</div>
+    <div class="modal-section-title">Descripción</div>
+    <p style="font-size:14px;color:var(--text-mid);line-height:1.6;">${s.desc}</p>
+    <div class="modal-section-title">Objetivos del Sprint</div>
+    <ul class="modal-list">${s.objectives.map(o=>`<li>${o}</li>`).join('')}</ul>
+    <div class="modal-section-title">Ceremonias Scrum</div>
+    <ul class="modal-list">${s.ceremonies.map(c=>`<li>${c}</li>`).join('')}</ul>
+    <div class="modal-scrum-master">
+      <div class="modal-scrum-master-label">🎯 Scrum Master de este Sprint</div>
+      <div class="modal-scrum-master-name">${s.sm}</div>
+    </div>
+  `;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+const HITO_DATA = {
+  h1: {
+    eyebrow: 'Hito 01 · 15% del trabajo',
+    title: 'Sprint 0: Planificación',
+    date: '13 de Mayo de 2026',
+    pct: '15%',
+    weight: 'Peso: 65% sobre Evaluación Continua 1',
+    desc: 'Primera entrega del proyecto. Se presenta el plan de proyecto, cronograma y el producto open source seleccionado.',
+    herramientas: ['GitHub Projects (tablero Kanban inicial)', 'GitHub Pages (presentación pública)'],
+    entregables: [
+      'Plan de proyecto y cronograma documentado',
+      'Selección y justificación de Krayin CRM',
+      'Repositorio GitHub configurado y organizado',
+      'Tablero Kanban con Product Backlog inicial',
+      'GitHub Pages publicada con información del proyecto',
+    ],
+  },
+  h2: {
+    eyebrow: 'Hito 02 · 60% del trabajo',
+    title: 'Sprints 1–2: Producto Funcionando',
+    date: '10 de Junio de 2026',
+    pct: '60%',
+    weight: 'Peso: 85% sobre Evaluación Continua 2',
+    desc: 'Producto de software funcionando con integración CI/CD DevOps e implementación completa del marco de trabajo ágil Scrum.',
+    herramientas: ['GitHub Actions (CI/CD)', 'GitHub Issues', 'GitHub Projects', 'GitHub Pages'],
+    entregables: [
+      'Historias de usuario implementadas y probadas',
+      'Pipeline CI/CD configurado y funcional',
+      'Tablero Kanban actualizado con avances reales',
+      'GitHub Pages con entorno de staging desplegado',
+      'Burndown Chart generado automáticamente',
+      'Documentación técnica en GitHub Wiki',
+    ],
+  },
+  h3: {
+    eyebrow: 'Hito 03 · 100% del trabajo',
+    title: 'Sprints 3–4: Entrega Final',
+    date: '13 de Julio de 2026',
+    pct: '100%',
+    weight: 'Peso: 100% sobre Evaluación Continua 3',
+    desc: 'Entrega completa: mejoras al software con despliegue CI/CD automatizado, documentación técnica de todo el proceso y artículo formato IEEE.',
+    herramientas: ['Todas las herramientas del ecosistema GitHub', 'Docker Compose', 'GitHub Actions (despliegue)'],
+    entregables: [
+      'Software con todas las mejoras implementadas',
+      'Despliegue CI/CD automatizado en servidor',
+      'Documentación técnica completa del proceso Scrum+DevOps',
+      'Artículo final en formato IEEE',
+      'Presentación del proyecto ante el docente',
+      'GitHub Pages con documentación pública completa',
+    ],
+  },
+};
+
+function openModal(id) {
+  const d = HITO_DATA[id];
+  mbody.innerHTML = `
+    <div class="modal-eyebrow">${d.eyebrow}</div>
+    <div class="modal-title">${d.title}</div>
+    <div class="modal-date">📅 ${d.date} &nbsp;·&nbsp; ${d.weight}</div>
+    <div class="modal-section-title">Descripción</div>
+    <p style="font-size:14px;color:var(--text-mid);line-height:1.6;">${d.desc}</p>
+    <div class="modal-section-title">Herramientas Requeridas</div>
+    <ul class="modal-list">${d.herramientas.map(h=>`<li>${h}</li>`).join('')}</ul>
+    <div class="modal-section-title">Entregables</div>
+    <ul class="modal-list">${d.entregables.map(e=>`<li>${e}</li>`).join('')}</ul>
+  `;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === overlay) { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+}
+function closeModalBtn() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+</script>
+</body>
+</html>
