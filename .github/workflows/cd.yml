@@ -28,5 +28,5 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/krayin/krayin:latest
-            ghcr.io/krayin/krayin:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/krayips-2026a:latest
+            ghcr.io/${{ github.repository_owner }}/krayips-2026a:${{ github.sha }}
