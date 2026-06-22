@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+          uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -35,10 +35,10 @@ jobs:
           ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Running Composer Install
+      - name: Composer Install
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Set Testing Environment
+      - name: Configuración Laravel
         run: |
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
@@ -47,9 +47,12 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1krayin|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          php artisan key:generate
 
-      - name: Running Krayin Installer
-        run: php artisan krayin-crm:install --skip-env-check --skip-admin-creation
+      - name: Análisis Estático
+        run: vendor/bin/pint --test
 
-      - name: Running Pest Test
-        run: vendor/bin/pest --parallel --colors=always
+      - name: Pruebas
+        run: |
+          php artisan krayin-crm:install --skip-env-check --skip-admin-creation
+          vendor/bin/pest --parallel --colors=always
