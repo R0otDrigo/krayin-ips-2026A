@@ -1,20 +1,31 @@
 services:
   app:
     image: ghcr.io/r0otdrigo/krayips-2026a:latest
+    restart: always
     ports:
       - "80:80"
+
     depends_on:
       - mysql
       - redis
+
     environment:
+      APP_ENV: production
+      APP_DEBUG: false
+      APP_URL: http://TU_IP
+
+      DB_CONNECTION: mysql
       DB_HOST: mysql
+      DB_PORT: 3306
       DB_DATABASE: krayin
       DB_USERNAME: root
       DB_PASSWORD: root
+
       REDIS_HOST: redis
 
   mysql:
     image: mysql:8.0
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: krayin
@@ -23,6 +34,7 @@ services:
 
   redis:
     image: redis:6.2-alpine
+    restart: always
 
 volumes:
   mysql_data:
