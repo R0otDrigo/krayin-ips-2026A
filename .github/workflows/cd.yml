@@ -24,9 +24,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/krayips-2026a:latest
-            ghcr.io/${{ github.repository_owner }}/krayips-2026a:${{ github.sha }}
+            ghcr.io/r0otdrigo/krayips-2026a:latest
+            ghcr.io/r0otdrigo/krayips-2026a:${{ github.sha }}
