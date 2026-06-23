@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Krayips CRM · Scrum & DevOps · EPIS-UNSA 2026-A</title>
+<title>Krayin CRM · Scrum & DevOps · EPIS-UNSA 2026-A</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -367,6 +367,97 @@
     background: linear-gradient(90deg, transparent, rgba(0,229,255,0.15), transparent);
   }
 
+  /* ── SCRUM DIAGRAM INTERACTIVO ── */
+  .scrum-diagram-container {
+    background: rgba(7,9,26,0.7);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 40px 32px 32px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 0 80px rgba(0,229,255,0.06), 0 0 160px rgba(124,58,237,0.05);
+  }
+  .scrum-flow-row {
+    display: flex; align-items: flex-end; justify-content: center;
+    gap: 0; flex-wrap: wrap; row-gap: 20px;
+  }
+  .scrum-node {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 18px 14px 14px; border-radius: 14px; border: 2px solid transparent;
+    cursor: pointer; transition: all .28s ease;
+    min-width: 120px; max-width: 140px;
+    backdrop-filter: blur(12px); flex-shrink: 0;
+  }
+  .scrum-node:hover { transform: translateY(-5px) scale(1.04); }
+  .scrum-node-icon { font-size: 26px; margin-bottom: 6px; }
+  .scrum-node-num { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.2em; opacity:.6; margin-bottom:4px; text-transform:uppercase; }
+  .scrum-node-name { font-size:12px; font-weight:700; line-height:1.3; margin-bottom:4px; }
+  .scrum-node-resp { font-size:10px; opacity:.6; line-height:1.3; }
+  .scrum-node-hint { margin-top:8px; font-size:9px; font-family:'Space Mono',monospace; letter-spacing:.08em; opacity:0; transition:opacity .2s; text-transform:uppercase; }
+  .scrum-node:hover .scrum-node-hint { opacity:.8; }
+
+  .node-blue   { background:rgba(79,70,229,0.18); border-color:rgba(79,70,229,0.45); color:#a5b4fc; }
+  .node-blue:hover   { border-color:#818cf8; box-shadow:0 0 28px rgba(79,70,229,0.45); }
+  .node-green  { background:rgba(34,197,94,0.15); border-color:rgba(34,197,94,0.4); color:#86efac; }
+  .node-green:hover  { border-color:#4ade80; box-shadow:0 0 28px rgba(34,197,94,0.35); }
+  .node-purple { background:rgba(124,58,237,0.2); border-color:rgba(124,58,237,0.45); color:#c4b5fd; }
+  .node-purple:hover { border-color:#a78bfa; box-shadow:0 0 28px rgba(124,58,237,0.45); }
+  .node-teal   { background:rgba(0,188,212,0.15); border-color:rgba(0,188,212,0.4); color:#67e8f9; }
+  .node-teal:hover   { border-color:var(--cyan); box-shadow:0 0 28px rgba(0,229,255,0.35); }
+  .node-orange { background:rgba(249,115,22,0.15); border-color:rgba(249,115,22,0.4); color:#fdba74; }
+  .node-orange:hover { border-color:#fb923c; box-shadow:0 0 28px rgba(249,115,22,0.35); }
+  .node-yellow { background:rgba(234,179,8,0.15); border-color:rgba(234,179,8,0.4); color:var(--gold); }
+  .node-yellow:hover { border-color:#facc15; box-shadow:0 0 28px rgba(234,179,8,0.35); }
+  .node-red    { background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.4); color:#fca5a5; }
+  .node-red:hover    { border-color:#f87171; box-shadow:0 0 28px rgba(239,68,68,0.35); }
+
+  .scrum-arrow { font-size:22px; font-weight:900; flex-shrink:0; padding:0 4px; align-self:center; margin-bottom:8px; }
+  .arrow-blue   { color:rgba(99,102,241,0.7); }
+  .arrow-purple { color:rgba(139,92,246,0.7); }
+  .arrow-teal   { color:rgba(0,229,255,0.7); }
+  .arrow-orange { color:rgba(249,115,22,0.7); }
+  .arrow-yellow { color:rgba(234,179,8,0.7); }
+
+  .scrum-execution-wrap { display:flex; flex-direction:column; align-items:center; gap:0; flex-shrink:0; }
+  .node-daily { min-width:110px; max-width:120px; padding:12px 10px 10px; }
+  .node-exec  { min-width:130px; max-width:148px; }
+  .daily-arrow { font-size:16px; color:rgba(0,229,255,0.5); line-height:1; padding:2px 0; }
+
+  .scrum-bottom-row { display:flex; align-items:flex-start; justify-content:center; gap:20px; margin-top:28px; flex-wrap:wrap; }
+  .feedback-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+  .feedback-line { width:260px; height:3px; background:linear-gradient(90deg,rgba(234,179,8,0.6),rgba(79,70,229,0.6)); border-radius:2px; position:relative; }
+  .feedback-line::after { content:''; position:absolute; right:0; top:-4px; width:0; height:0; border-left:8px solid rgba(234,179,8,0.6); border-top:5px solid transparent; border-bottom:5px solid transparent; }
+  .feedback-label { font-size:9px; font-family:'Space Mono',monospace; color:var(--gold); opacity:.7; letter-spacing:.1em; text-transform:uppercase; }
+  .node-increment,.node-objetivo { min-width:130px; max-width:145px; padding:18px 12px 14px; }
+
+  .scrum-tools-card { background:rgba(7,9,26,0.5); border:1px dashed rgba(0,229,255,0.25); border-radius:14px; padding:16px 18px; cursor:pointer; transition:all .28s; min-width:150px; }
+  .scrum-tools-card:hover { border-color:var(--cyan); box-shadow:0 0 24px rgba(0,229,255,0.2); transform:translateY(-4px); }
+  .scrum-tools-card .scrum-node-icon { font-size:20px; margin-bottom:6px; }
+  .scrum-tools-card .scrum-node-name { font-size:12px; font-weight:700; color:var(--cyan); margin-bottom:8px; }
+  .tools-mini-list { display:flex; flex-direction:column; gap:4px; }
+  .tools-mini-list span { font-size:10px; color:var(--text-dim); font-family:'Space Mono',monospace; }
+  .scrum-tools-card .scrum-node-hint { font-size:9px; font-family:'Space Mono',monospace; letter-spacing:.08em; opacity:0; transition:opacity .2s; text-transform:uppercase; color:var(--cyan); margin-top:8px; }
+  .scrum-tools-card:hover .scrum-node-hint { opacity:.8; }
+
+  /* Sprint selector */
+  .sprint-selector-wrap { margin-top:36px; border-top:1px solid rgba(0,229,255,0.12); padding-top:28px; text-align:center; }
+  .sprint-selector-title { font-size:12px; color:var(--text-mid); margin-bottom:16px; font-family:'Space Mono',monospace; letter-spacing:.06em; }
+  .sprint-selector-tabs { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .sprint-tab { padding:10px 28px; border-radius:8px; background:var(--card-bg); border:1px solid var(--card-border); color:var(--text-mid); font-family:'Space Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; transition:all .25s; letter-spacing:.05em; }
+  .sprint-tab:hover { background:rgba(0,229,255,0.1); border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 20px rgba(0,229,255,0.2); transform:translateY(-2px); }
+  .sprint-tab.active { background:linear-gradient(135deg,rgba(79,70,229,0.35),rgba(124,58,237,0.35)); border-color:var(--violet); color:#c4b5fd; box-shadow:0 0 24px rgba(124,58,237,0.3); }
+
+  /* Modal links */
+  .modal-links-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+  .modal-wiki-link,.modal-link-btn { display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:600; font-family:'Space Mono',monospace; transition:all .22s; letter-spacing:.04em; }
+  .modal-wiki-link { background:rgba(0,229,255,0.08); border:1px solid rgba(0,229,255,0.3); color:var(--cyan); }
+  .modal-wiki-link:hover { background:rgba(0,229,255,0.16); border-color:var(--cyan); box-shadow:0 0 20px rgba(0,229,255,0.25); }
+  .modal-link-btn { background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.35); color:#c4b5fd; }
+  .modal-link-btn:hover { background:rgba(124,58,237,0.25); border-color:var(--violet); box-shadow:0 0 16px rgba(124,58,237,0.3); }
+  .modal-link-btn.link-green { background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.35); color:#86efac; }
+  .modal-link-btn.link-green:hover { background:rgba(34,197,94,0.2); border-color:#4ade80; }
+  .modal-link-btn.link-orange { background:rgba(249,115,22,0.1); border-color:rgba(249,115,22,0.35); color:#fdba74; }
+  .modal-link-btn.link-orange:hover { background:rgba(249,115,22,0.2); border-color:#fb923c; }
+
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
     .nav-links { display: none; }
@@ -384,13 +475,12 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">Krayips CRM · IPS 2026-A</div>
+  <div class="nav-brand">Krayin CRM · IPS 2026-A</div>
   <div class="nav-links">
-    <a href="#hitos">Hitos</a>
     <a href="#scrum-flow">Flujo Scrum</a>
-    <a href="#sprints">Sprints</a>
     <a href="#team">Equipo</a>
     <a href="#tools">Herramientas</a>
+    <a href="https://github.com/R0otDrigo/krayips-2026A" target="_blank">GitHub →</a>
   </div>
 </nav>
 
@@ -398,17 +488,17 @@
   <!-- HERO -->
   <section id="hero">
     <div class="hero-eyebrow">EPIS-UNSA &nbsp;·&nbsp; Semestre 2026-A &nbsp;·&nbsp; Prof. Robert Arisaca</div>
-    <h1 class="hero-title">Krayips CRM</h1>
+    <h1 class="hero-title">Krayin CRM</h1>
     <p class="hero-sub">Scrum & DevOps aplicado a un producto open source</p>
     <p class="hero-meta">Ingeniería y Procesos de Software &nbsp;·&nbsp; Equipo de 5 integrantes</p>
     <div class="hero-cta">
-      <a href="#hitos" class="btn-primary">
+      <a href="#scrum-flow" class="btn-primary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Ver hitos del proyecto
+        Ver Flujo Scrum
       </a>
-      <a href="#scrum-flow" class="btn-ghost">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        Flujo Scrum
+      <a href="https://github.com/R0otDrigo/krayips-2026A" target="_blank" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        Ver en GitHub
       </a>
     </div>
     <div class="scroll-hint">
@@ -417,55 +507,153 @@
     </div>
   </section>
 
-  <!-- HITOS -->
+  <!-- SCRUM INTERACTIVO -->
   <div class="divider"></div>
-  <section id="hitos" style="max-width:1180px;margin:0 auto;">
-    <div style="text-align:center;margin-bottom:48px;">
-      <div class="s-label">Entregables</div>
-      <h2 class="s-title">Hitos del Proyecto</h2>
-      <p class="s-desc" style="margin:0 auto;">Tres momentos clave que marcan el avance del proceso ágil integrado con DevOps.</p>
-    </div>
-    <div class="hitos-grid">
-      <div class="hito-card h1" onclick="openModal('h1')">
-        <div class="hito-n">Hito 01</div>
-        <div class="hito-pct">15%</div>
-        <div class="hito-date">13 · MAY · 2026</div>
-        <div class="hito-body">Sprint 0: Plan de proyecto, cronograma y presentación del producto open source seleccionado.</div>
-        <div class="hito-weight">Peso: 65% sobre EC1</div>
-        <div style="margin-top:16px;font-size:11px;color:var(--cyan);font-family:'Space Mono',monospace;">VER DETALLE →</div>
-      </div>
-      <div class="hito-card h2" onclick="openModal('h2')">
-        <div class="hito-n">Hito 02</div>
-        <div class="hito-pct">60%</div>
-        <div class="hito-date">10 · JUN · 2026</div>
-        <div class="hito-body">Sprints 1–2: Software funcionando con integración CI/CD y marco ágil Scrum completo.</div>
-        <div class="hito-weight">Peso: 85% sobre EC2</div>
-        <div style="margin-top:16px;font-size:11px;color:var(--magenta);font-family:'Space Mono',monospace;">VER DETALLE →</div>
-      </div>
-      <div class="hito-card h3" onclick="openModal('h3')">
-        <div class="hito-n">Hito 03</div>
-        <div class="hito-pct">100%</div>
-        <div class="hito-date">13 · JUL · 2026</div>
-        <div class="hito-body">Sprints 3–4: Mejoras con despliegue CI/CD automatizado, documentación IEEE y presentación final.</div>
-        <div class="hito-weight">Peso: 100% sobre EC3</div>
-        <div style="margin-top:16px;font-size:11px;color:var(--gold);font-family:'Space Mono',monospace;">VER DETALLE →</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SCRUM FLOW DIAGRAM -->
-  <div class="divider"></div>
-  <section id="scrum-flow" style="max-width:1180px;margin:0 auto;">
-    <div class="sprint-header">
+  <section id="scrum-flow" style="max-width:1180px;margin:0 auto;padding:100px 40px;">
+    <div class="sprint-header" style="text-align:center;margin-bottom:56px;">
       <div class="s-label">Metodología</div>
-      <h2 class="s-title">Flujo Scrum – Krayips CRM</h2>
-      <p class="s-desc" style="margin:0 auto;">Simulación de implementación ágil del proyecto sobre el ciclo completo: Product Backlog → Sprint Planning → Ejecución → Review → Retrospective.</p>
+      <h2 class="s-title">Flujo Scrum – Krayin CRM</h2>
+      <p class="s-desc" style="margin:0 auto;">Simulación de implementación ágil del proyecto. Haz clic en cada fase para ver su descripción, luego selecciona un sprint para ver sus detalles completos.</p>
     </div>
-    <div class="flow-diagram-wrap">
-      <img src="1782142927904_image.png" alt="Flujo Scrum Krayips CRM" />
-      <div class="flow-overlay"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:24px;">
+
+    <!-- DIAGRAMA SCRUM SVG INTERACTIVO -->
+    <div class="scrum-diagram-container">
+
+      <!-- FASES SCRUM: fila principal -->
+      <div class="scrum-flow-row">
+
+        <!-- 1. PRODUCT BACKLOG -->
+        <div class="scrum-node node-blue" onclick="openPhaseModal('pb')">
+          <div class="scrum-node-icon">📋</div>
+          <div class="scrum-node-num">1</div>
+          <div class="scrum-node-name">Product Backlog</div>
+          <div class="scrum-node-resp">Product Owner</div>
+          <div class="scrum-node-hint">Click para ver detalle</div>
+        </div>
+
+        <div class="scrum-arrow arrow-blue">→</div>
+
+        <!-- 2. SPRINT PLANNING -->
+        <div class="scrum-node node-green" onclick="openPhaseModal('sp')">
+          <div class="scrum-node-icon">👥</div>
+          <div class="scrum-node-num">2</div>
+          <div class="scrum-node-name">Sprint Planning</div>
+          <div class="scrum-node-resp">PO + Team</div>
+          <div class="scrum-node-hint">Click para ver detalle</div>
+        </div>
+
+        <div class="scrum-arrow arrow-purple">→</div>
+
+        <!-- 3. SPRINT BACKLOG -->
+        <div class="scrum-node node-purple" onclick="openPhaseModal('sb')">
+          <div class="scrum-node-icon">☑️</div>
+          <div class="scrum-node-num">3</div>
+          <div class="scrum-node-name">Sprint Backlog</div>
+          <div class="scrum-node-resp">Equipo de Desarrollo</div>
+          <div class="scrum-node-hint">Click para ver detalle</div>
+        </div>
+
+        <div class="scrum-arrow arrow-teal">→</div>
+
+        <!-- 4. EJECUCIÓN (con daily scrum encima) -->
+        <div class="scrum-execution-wrap">
+          <!-- Daily Scrum arriba -->
+          <div class="scrum-node node-teal node-daily" onclick="openPhaseModal('ds')">
+            <div class="scrum-node-icon">🗓️</div>
+            <div class="scrum-node-name">Daily Scrum</div>
+            <div class="scrum-node-resp">15 min / diario</div>
+            <div class="scrum-node-hint">Click para ver detalle</div>
+          </div>
+          <div class="daily-arrow">↕</div>
+          <!-- Ejecución -->
+          <div class="scrum-node node-teal node-exec" onclick="openPhaseModal('ex')">
+            <div class="scrum-node-icon">⚙️</div>
+            <div class="scrum-node-num">4</div>
+            <div class="scrum-node-name">Ejecución del Sprint</div>
+            <div class="scrum-node-resp">3 semanas</div>
+            <div class="scrum-node-hint">Click para ver detalle</div>
+          </div>
+        </div>
+
+        <div class="scrum-arrow arrow-orange">→</div>
+
+        <!-- 5. SPRINT REVIEW -->
+        <div class="scrum-node node-orange" onclick="openPhaseModal('sr')">
+          <div class="scrum-node-icon">📊</div>
+          <div class="scrum-node-num">5</div>
+          <div class="scrum-node-name">Sprint Review</div>
+          <div class="scrum-node-resp">PO + Team</div>
+          <div class="scrum-node-hint">Click para ver detalle</div>
+        </div>
+
+        <div class="scrum-arrow arrow-yellow">→</div>
+
+        <!-- 6. SPRINT RETROSPECTIVE -->
+        <div class="scrum-node node-yellow" onclick="openPhaseModal('retro')">
+          <div class="scrum-node-icon">🔄</div>
+          <div class="scrum-node-num">6</div>
+          <div class="scrum-node-name">Retrospective</div>
+          <div class="scrum-node-resp">PO + Team</div>
+          <div class="scrum-node-hint">Click para ver detalle</div>
+        </div>
+      </div>
+
+      <!-- FILA INFERIOR: Incremento + Objetivo + Herramientas -->
+      <div class="scrum-bottom-row">
+        <!-- flecha feedback de Retro a Product Backlog -->
+        <div class="scrum-feedback-arrow">
+          <div class="feedback-line"></div>
+          <div class="feedback-label">Mejora continua</div>
+        </div>
+
+        <!-- Incremento -->
+        <div class="scrum-node node-teal node-increment" onclick="openPhaseModal('inc')">
+          <div class="scrum-node-icon">📦</div>
+          <div class="scrum-node-name">Incremento</div>
+          <div class="scrum-node-resp">Entregable del Sprint</div>
+          <div class="scrum-node-hint">Click para ver detalle</div>
+        </div>
+
+        <!-- Objetivo Final -->
+        <div class="scrum-node node-red node-objetivo" onclick="openPhaseModal('obj')">
+          <div class="scrum-node-icon">🎯</div>
+          <div class="scrum-node-name">Objetivo Final</div>
+          <div class="scrum-node-resp">Krayin CRM + Scrum</div>
+          <div class="scrum-node-hint">Click para ver detalle</div>
+        </div>
+
+        <!-- Herramientas -->
+        <div class="scrum-tools-card" onclick="openPhaseModal('tools')">
+          <div class="scrum-node-icon">🔧</div>
+          <div class="scrum-node-name">Herramientas</div>
+          <div class="tools-mini-list">
+            <span>GitHub Projects</span>
+            <span>GitHub Issues</span>
+            <span>GitHub Wiki</span>
+            <span>GitHub Actions</span>
+          </div>
+          <div class="scrum-node-hint">Click para ver detalle</div>
+        </div>
+      </div>
+
+      <!-- SELECTOR DE SPRINT -->
+      <div class="sprint-selector-wrap">
+        <div class="sprint-selector-title">
+          <span class="s-label" style="display:inline-block;margin-bottom:0;">Iteraciones</span>
+          &nbsp;·&nbsp; Selecciona un Sprint para ver sus detalles
+        </div>
+        <div class="sprint-selector-tabs">
+          <button class="sprint-tab" onclick="openSprintSelector('s0')">Sprint 0</button>
+          <button class="sprint-tab" onclick="openSprintSelector('s1')">Sprint 1</button>
+          <button class="sprint-tab" onclick="openSprintSelector('s2')">Sprint 2</button>
+          <button class="sprint-tab" onclick="openSprintSelector('s3')">Sprint 3</button>
+        </div>
+      </div>
+
+    </div><!-- /scrum-diagram-container -->
+
+    <!-- STATS -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:32px;">
       <div style="text-align:center;padding:20px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;">
         <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px;font-family:'Space Mono',monospace;">Sprints</div>
         <div style="font-size:28px;font-weight:700;color:var(--cyan);">4</div>
@@ -487,17 +675,6 @@
         <div style="font-size:12px;color:var(--text-dim);">Licencia open source</div>
       </div>
     </div>
-  </section>
-
-  <!-- SPRINTS TIMELINE -->
-  <div class="divider"></div>
-  <section id="sprints" style="max-width:1180px;margin:0 auto;">
-    <div class="sprint-header">
-      <div class="s-label">Iteraciones</div>
-      <h2 class="s-title">Sprints del Proyecto</h2>
-      <p class="s-desc" style="margin:0 auto;">Cada sprint de 15 días con rol de Scrum Master rotativo, ceremonias ágiles y entregables concretos.</p>
-    </div>
-    <div class="timeline" id="timeline"></div>
   </section>
 
   <!-- TEAM -->
@@ -553,7 +730,7 @@
 </main>
 
 <footer>
-  <div class="f-logo">Krayips CRM · EPIS-UNSA</div>
+  <div class="f-logo">Krayin CRM · EPIS-UNSA</div>
   <p>Ingeniería y Procesos de Software · Semestre 2026-A · Prof. Robert Arisaca</p>
   <p style="margin-top:6px;">Universidad Nacional de San Agustín · Arequipa, Perú</p>
 </footer>
@@ -605,20 +782,17 @@ function initStars() {
 let t = 0;
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  // bg
   const bg = ctx.createLinearGradient(0, 0, W, H);
   bg.addColorStop(0, '#03050f');
   bg.addColorStop(0.5, '#07091a');
   bg.addColorStop(1, '#0a050f');
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-  // nebulae
   nebulae.forEach(n => {
     const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
     g.addColorStop(0, n.c + n.o + ')');
     g.addColorStop(1, n.c + '0)');
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
   });
-  // stars
   t += 0.012;
   stars.forEach(s => {
     s.x += s.vx; s.y += s.vy;
@@ -638,30 +812,35 @@ function draw() {
 window.addEventListener('resize', () => { resize(); initStars(); });
 resize(); initStars(); draw();
 
-// ── DATA ──
-const SPRINTS = [
-  {
-    id: 's0', num: 'Sprint 0', name: 'Planificación Inicial',
+// ── SPRINT DATA ──
+const SPRINTS = {
+  s0: {
+    num: 'Sprint 0', name: 'Planificación Inicial',
     date: 'Previo al 13 MAY 2026', hito: 'Hito 1',
     sm: 'Rodrigo Estefanero Palma',
     tags: [{l:'Planificación',c:'tag-blue'},{l:'GitHub Projects',c:'tag-cyan'},{l:'GitHub Pages',c:'tag-cyan'}],
-    desc: 'Reunión inicial para acuerdo de roles, configuración de repositorio y presentación del producto Krayips CRM ante el equipo.',
+    desc: 'Reunión inicial para acuerdo de roles, configuración de repositorio y presentación del producto Krayin CRM ante el equipo.',
     objectives: [
       'Definir roles iniciales y estructura del equipo',
       'Configurar repositorio GitHub y herramientas del proyecto',
-      'Seleccionar y presentar Krayips CRM como producto open source',
+      'Seleccionar y presentar Krayin CRM como producto open source',
       'Elaborar plan de proyecto y cronograma general',
       'Configurar GitHub Projects con tablero Kanban inicial',
       'Publicar primera versión de GitHub Pages',
     ],
     ceremonies: ['Sprint Planning (acuerdo de roles)', 'Sprint Review (presentación del plan)'],
+    links: [
+      { label:'📋 GitHub Projects (Kanban)', url:'https://github.com/users/R0otDrigo/projects/4/views/6', cls:'link-green' },
+      { label:'🌐 GitHub Pages', url:'https://r0otdrigo.github.io/krayips-2026A/', cls:'' },
+    ],
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
   },
-  {
-    id: 's1', num: 'Sprint 1', name: 'Primeras Historias de Usuario',
+  s1: {
+    num: 'Sprint 1', name: 'Primeras Historias de Usuario',
     date: '13 MAY – 10 JUN 2026', hito: 'Hito 2',
     sm: 'Ronald Camani Chambi',
     tags: [{l:'Desarrollo',c:'tag-violet'},{l:'GitHub Issues',c:'tag-cyan'},{l:'CI/CD',c:'tag-gold'}],
-    desc: 'Implementación de las primeras historias de usuario sobre Krayips CRM. Verificación de avances y configuración inicial del pipeline CI/CD.',
+    desc: 'Implementación de las primeras historias de usuario sobre Krayin CRM. Verificación de avances y configuración inicial del pipeline CI/CD.',
     objectives: [
       'Implementar historias de usuario priorizadas del Product Backlog',
       'Configurar pipeline básico con GitHub Actions',
@@ -671,9 +850,14 @@ const SPRINTS = [
       'Actualizar tablero Kanban con progreso real',
     ],
     ceremonies: ['Sprint Planning (día 1)', 'Daily Scrum (asíncrono)', 'Sprint Review (día 14)', 'Sprint Retrospective (día 15)'],
+    links: [
+      { label:'⚙️ GitHub Actions', url:'https://github.com/R0otDrigo/krayips-2026A/actions', cls:'link-orange' },
+      { label:'📋 GitHub Projects', url:'https://github.com/users/R0otDrigo/projects/4/views/6', cls:'link-green' },
+    ],
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
   },
-  {
-    id: 's2', num: 'Sprint 2', name: 'Funcionalidades y CI/CD',
+  s2: {
+    num: 'Sprint 2', name: 'Funcionalidades y CI/CD',
     date: '10 JUN – 25 JUN 2026', hito: 'Hito 2',
     sm: 'Diego Hans Schreiber Landeo',
     tags: [{l:'DevOps',c:'tag-gold'},{l:'Testing',c:'tag-violet'},{l:'GitHub Actions',c:'tag-cyan'}],
@@ -687,9 +871,14 @@ const SPRINTS = [
       'Refinar Product Backlog con nuevas historias',
     ],
     ceremonies: ['Sprint Planning', 'Daily Scrum asíncronos', 'Sprint Review en entorno staging', 'Sprint Retrospective'],
+    links: [
+      { label:'⚙️ GitHub Actions (CI/CD)', url:'https://github.com/R0otDrigo/krayips-2026A/actions', cls:'link-orange' },
+      { label:'📖 Wiki CI/CD', url:'https://github.com/R0otDrigo/krayips-2026A/wiki/Implementaci%C3%B3n-de-CI-CD-con-GitHub-Actions', cls:'' },
+    ],
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Implementaci%C3%B3n-de-CI-CD-con-GitHub-Actions',
   },
-  {
-    id: 's3', num: 'Sprint 3', name: 'Despliegue y Mejoras',
+  s3: {
+    num: 'Sprint 3', name: 'Despliegue y Mejoras',
     date: '25 JUN – 13 JUL 2026', hito: 'Hito 3',
     sm: 'Solsol Choque Fernando Rafael',
     tags: [{l:'Despliegue',c:'tag-gold'},{l:'CI/CD Completo',c:'tag-cyan'},{l:'Documentación',c:'tag-blue'}],
@@ -703,39 +892,213 @@ const SPRINTS = [
       'Publicar documentación completa en GitHub Pages',
     ],
     ceremonies: ['Sprint Planning', 'Daily Scrum asíncronos', 'Sprint Review final', 'Sprint Retrospective global'],
+    links: [
+      { label:'⚙️ GitHub Actions', url:'https://github.com/R0otDrigo/krayips-2026A/actions', cls:'link-orange' },
+      { label:'🌐 GitHub Pages', url:'https://r0otdrigo.github.io/krayips-2026A/', cls:'' },
+      { label:'📖 Wiki', url:'https://github.com/R0otDrigo/krayips-2026A/wiki', cls:'link-green' },
+    ],
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
   },
-];
+};
 
-const TEAM = [
-  { name: 'Rodrigo\nEstefanero Palma', pct: '30%', init: 'RE', lead: true },
-  { name: 'Solsol Choque\nFernando Rafael', pct: '17.5%', init: 'SF' },
-  { name: 'Rodolfo\nSoria Soncco', pct: '17.5%', init: 'RS' },
-  { name: 'Diego Hans\nSchreiber Landeo', pct: '17.5%', init: 'DS' },
-  { name: 'Ronald Rodrigo\nCamani Chambi', pct: '17.5%', init: 'RC' },
-];
-
-// ── RENDER TIMELINE ──
-const tl = document.getElementById('timeline');
-SPRINTS.forEach((s, i) => {
-  const card = document.createElement('div');
-  card.className = 'sprint-card';
-  card.innerHTML = `
-    <div class="sprint-dot"></div>
-    <div class="sprint-num">${s.num} &nbsp;·&nbsp; ${s.hito}</div>
-    <div class="sprint-name">${s.name}</div>
-    <div class="sprint-date">${s.date}</div>
-    <div class="sprint-tags">${s.tags.map(t=>`<span class="tag ${t.c}">${t.l}</span>`).join('')}</div>
-    <div class="sprint-desc">${s.desc}</div>
-    <div class="sprint-click-hint">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      Ver detalle del sprint
-    </div>
-  `;
-  card.onclick = () => openSprintModal(s);
-  tl.appendChild(card);
-});
+// ── PHASE DATA ──
+const PHASES = {
+  pb: {
+    eyebrow: 'Fase 1 · Product Backlog',
+    title: 'Product Backlog',
+    icon: '📋',
+    color: '#a5b4fc',
+    desc: 'Lista priorizada de todas las funcionalidades, historias de usuario, tareas técnicas y mejoras del producto Krayin CRM. Es la única fuente de trabajo para el equipo.',
+    items: [
+      'Historias de usuario priorizadas por valor de negocio',
+      'Tareas técnicas de configuración e infraestructura',
+      'Documentación del producto y procesos',
+      'Análisis y diseño de arquitectura',
+      'Testing y automatización de pruebas',
+    ],
+    resp: 'Responsable: Product Owner',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
+    links: [{ label:'📋 Ver Tablero Kanban', url:'https://github.com/users/R0otDrigo/projects/4/views/6', cls:'link-green' }],
+  },
+  sp: {
+    eyebrow: 'Fase 2 · Sprint Planning',
+    title: 'Sprint Planning',
+    icon: '👥',
+    color: '#86efac',
+    desc: 'Reunión al inicio de cada Sprint donde el equipo selecciona los ítems del Product Backlog a trabajar y planifica cómo lograr el objetivo del Sprint.',
+    items: [
+      'Selección de historias del Product Backlog',
+      'Definición del Sprint Goal (objetivo del sprint)',
+      'Estimación de esfuerzo con Story Points',
+      'Asignación de tareas entre integrantes',
+      'Definición de criterios de aceptación',
+    ],
+    resp: 'Responsables: PO + Team',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
+    links: [{ label:'📋 GitHub Projects', url:'https://github.com/users/R0otDrigo/projects/4/views/6', cls:'link-green' }],
+  },
+  sb: {
+    eyebrow: 'Fase 3 · Sprint Backlog',
+    title: 'Sprint Backlog',
+    icon: '☑️',
+    color: '#c4b5fd',
+    desc: 'Subconjunto del Product Backlog seleccionado para el Sprint actual. Contiene las tareas comprometidas por el equipo para las 3 semanas de ejecución.',
+    items: [
+      'Tareas desglosadas de las historias seleccionadas',
+      'Asignación de responsables por tarea',
+      'Estado actualizado en GitHub Issues',
+      'Seguimiento en tablero Kanban (GitHub Projects)',
+      'Criterios de Done definidos para cada tarea',
+    ],
+    resp: 'Responsable: Equipo de Desarrollo',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
+    links: [
+      { label:'🎫 GitHub Issues', url:'https://github.com/R0otDrigo/krayips-2026A/issues', cls:'' },
+      { label:'📋 GitHub Projects', url:'https://github.com/users/R0otDrigo/projects/4/views/6', cls:'link-green' },
+    ],
+  },
+  ds: {
+    eyebrow: 'Ceremonia · Daily Scrum',
+    title: 'Daily Scrum',
+    icon: '🗓️',
+    color: '#67e8f9',
+    desc: 'Reunión diaria de 15 minutos para sincronizar al equipo, identificar bloqueos y planificar el trabajo del día. Se realiza de forma asíncrona vía GitHub.',
+    items: [
+      '¿Qué hice ayer para lograr el Sprint Goal?',
+      '¿Qué haré hoy para lograr el Sprint Goal?',
+      '¿Existe algún impedimento o bloqueo?',
+      'Registro de avances en GitHub Issues/Projects',
+      'Comunicación asíncrona vía comentarios en GitHub',
+    ],
+    resp: 'Todo el equipo · 15 min diarios',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
+    links: [],
+  },
+  ex: {
+    eyebrow: 'Fase 4 · Ejecución del Sprint',
+    title: 'Ejecución del Sprint',
+    icon: '⚙️',
+    color: '#67e8f9',
+    desc: 'Período de 3 semanas donde el equipo trabaja en las tareas comprometidas del Sprint Backlog para incrementar el producto Krayin CRM.',
+    items: [
+      'Análisis y revisión de arquitectura del producto',
+      'Documentación técnica en GitHub Wiki y Pages',
+      'Revisión y testing del sistema Krayin CRM',
+      'Automatización CI/CD con GitHub Actions',
+      'Actualización del tablero Kanban y GitHub Pages',
+      'Integración continua y entrega continua',
+    ],
+    resp: 'Equipo de Desarrollo',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Implementaci%C3%B3n-de-CI-CD-con-GitHub-Actions',
+    links: [
+      { label:'⚙️ GitHub Actions (CI/CD)', url:'https://github.com/R0otDrigo/krayips-2026A/actions', cls:'link-orange' },
+      { label:'📖 Wiki CI/CD', url:'https://github.com/R0otDrigo/krayips-2026A/wiki/Implementaci%C3%B3n-de-CI-CD-con-GitHub-Actions', cls:'' },
+    ],
+  },
+  sr: {
+    eyebrow: 'Fase 5 · Sprint Review',
+    title: 'Sprint Review',
+    icon: '📊',
+    color: '#fdba74',
+    desc: 'Reunión al final del Sprint donde el equipo presenta el trabajo completado al Product Owner y stakeholders, y se adapta el Product Backlog si es necesario.',
+    items: [
+      'Demo del incremento funcional de Krayin CRM',
+      'Revisión de historias de usuario completadas',
+      'Feedback del Product Owner sobre el trabajo',
+      'Actualización del Product Backlog según resultados',
+      'Evaluación del Sprint Goal alcanzado',
+    ],
+    resp: 'Responsables: PO + Team',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
+    links: [{ label:'🌐 Ver GitHub Pages', url:'https://r0otdrigo.github.io/krayips-2026A/', cls:'' }],
+  },
+  retro: {
+    eyebrow: 'Fase 6 · Sprint Retrospective',
+    title: 'Sprint Retrospective',
+    icon: '🔄',
+    color: '#fde68a',
+    desc: 'Reunión de mejora continua donde el equipo reflexiona sobre el proceso de trabajo del Sprint, identifica qué funcionó y qué mejorar en el siguiente Sprint.',
+    items: [
+      '¿Qué funcionó bien en el Sprint?',
+      '¿Qué se puede mejorar en el próximo Sprint?',
+      'Acciones concretas de mejora a implementar',
+      'Revisión de la velocidad del equipo',
+      'Ajustes al proceso Scrum del equipo',
+    ],
+    resp: 'Responsables: PO + Team',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
+    links: [],
+  },
+  inc: {
+    eyebrow: 'Artefacto · Incremento',
+    title: 'Incremento del Sprint',
+    icon: '📦',
+    color: '#67e8f9',
+    desc: 'Resultado tangible y funcional de cada Sprint. Es la suma de todos los ítems del Product Backlog completados durante el Sprint más el valor de todos los Sprints anteriores.',
+    items: [
+      'Documentación actualizada en GitHub Wiki',
+      'Análisis y reportes del avance del producto',
+      'Evidencias en GitHub (commits, PRs, Issues)',
+      'Actualización de la Wiki y GitHub Pages',
+      'Pipeline CI/CD ejecutado y funcional',
+      'Krayin CRM con nuevas funcionalidades verificadas',
+    ],
+    resp: 'Entregable de cada Sprint',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Proceso-de-Implementaci%C3%B3n-de-Scrum',
+    links: [{ label:'🌐 Ver en GitHub Pages', url:'https://r0otdrigo.github.io/krayips-2026A/', cls:'' }],
+  },
+  obj: {
+    eyebrow: 'Meta · Objetivo Final',
+    title: 'Objetivo Final del Proyecto',
+    icon: '🎯',
+    color: '#fca5a5',
+    desc: 'Comprender y documentar a fondo Krayin CRM aplicando Scrum y prácticas de automatización y colaboración.',
+    items: [
+      'Implementar Krayin CRM con proceso Scrum completo',
+      'Pipeline CI/CD automatizado y funcional con GitHub Actions',
+      'Documentación técnica IEEE del proceso completo',
+      'GitHub Pages con toda la información del proyecto',
+      'Evidencias de metodología ágil aplicada',
+      'Presentación final ante el docente',
+    ],
+    resp: 'Equipo completo · EPIS-UNSA 2026-A',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki',
+    links: [
+      { label:'🌐 GitHub Pages', url:'https://r0otdrigo.github.io/krayips-2026A/', cls:'' },
+      { label:'📖 GitHub Wiki', url:'https://github.com/R0otDrigo/krayips-2026A/wiki', cls:'link-green' },
+    ],
+  },
+  tools: {
+    eyebrow: 'Stack · Herramientas',
+    title: 'Herramientas del Proyecto',
+    icon: '🔧',
+    color: '#00e5ff',
+    desc: 'El ecosistema GitHub como columna vertebral del proceso Scrum + DevOps del proyecto Krayin CRM.',
+    items: [
+      'GitHub Projects (Kanban) — Gestión de tareas y Sprints',
+      'GitHub Issues — Product Backlog y registro de bugs',
+      'GitHub Wiki — Documentación técnica del proceso',
+      'GitHub Pages — Información pública del proyecto',
+      'GitHub Actions (CI/CD) — Automatización y despliegue',
+    ],
+    resp: 'GitHub Ecosystem',
+    wikiUrl: 'https://github.com/R0otDrigo/krayips-2026A/wiki/Implementaci%C3%B3n-de-CI-CD-con-GitHub-Actions',
+    links: [
+      { label:'📋 GitHub Projects', url:'https://github.com/users/R0otDrigo/projects/4/views/6', cls:'link-green' },
+      { label:'⚙️ GitHub Actions', url:'https://github.com/R0otDrigo/krayips-2026A/actions', cls:'link-orange' },
+      { label:'📖 GitHub Wiki', url:'https://github.com/R0otDrigo/krayips-2026A/wiki', cls:'' },
+    ],
+  },
+};
 
 // ── RENDER TEAM ──
+const TEAM = [
+  { name: 'Rodrigo\nEstefanero Palma', pct: '100%', init: 'RE', lead: true },
+  { name: 'Solsol Choque\nFernando Rafael', pct: '100%', init: 'SF' },
+  { name: 'Rodolfo\nSoria Soncco', pct: '80%', init: 'RS' },
+  { name: 'Diego Hans\nSchreiber Landeo', pct: '70%', init: 'DS' },
+  { name: 'Ronald Rodrigo\nCamani Chambi', pct: '80%', init: 'RC' },
+];
 const tg = document.getElementById('teamGrid');
 TEAM.forEach(m => {
   const card = document.createElement('div');
@@ -754,14 +1117,60 @@ TEAM.forEach(m => {
 const overlay = document.getElementById('modalOverlay');
 const mbody = document.getElementById('modalBody');
 
-function openSprintModal(s) {
+function openPhaseModal(phaseId) {
+  const d = PHASES[phaseId];
+  if (!d) return;
+  const linksHtml = d.links && d.links.length ? `
+    <div class="modal-section-title">Recursos del Proyecto</div>
+    <div class="modal-links-row">
+      ${d.links.map(l => `<a href="${l.url}" target="_blank" class="modal-link-btn ${l.cls}">${l.label} ↗</a>`).join('')}
+      ${d.wikiUrl ? `<a href="${d.wikiUrl}" target="_blank" class="modal-wiki-link">📖 Ver en GitHub Wiki ↗</a>` : ''}
+    </div>
+  ` : (d.wikiUrl ? `
+    <div class="modal-section-title">Documentación</div>
+    <div class="modal-links-row">
+      <a href="${d.wikiUrl}" target="_blank" class="modal-wiki-link">📖 Ver en GitHub Wiki ↗</a>
+    </div>
+  ` : '');
+
+  mbody.innerHTML = `
+    <div class="modal-eyebrow">${d.eyebrow}</div>
+    <div class="modal-title" style="color:${d.color};">${d.icon} ${d.title}</div>
+    <div class="modal-date">${d.resp}</div>
+    <div class="modal-section-title">Descripción</div>
+    <p style="font-size:14px;color:var(--text-mid);line-height:1.65;">${d.desc}</p>
+    <div class="modal-section-title">Actividades / Contenidos</div>
+    <ul class="modal-list">${d.items.map(i=>`<li>${i}</li>`).join('')}</ul>
+    ${linksHtml}
+  `;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openSprintSelector(sprintId) {
+  // Activate tab
+  document.querySelectorAll('.sprint-tab').forEach(btn => btn.classList.remove('active'));
+  const clicked = [...document.querySelectorAll('.sprint-tab')].find(b => b.getAttribute('onclick').includes(sprintId));
+  if (clicked) clicked.classList.add('active');
+
+  const s = SPRINTS[sprintId];
+  if (!s) return;
+
+  const linksHtml = `
+    <div class="modal-section-title">Recursos y Documentación</div>
+    <div class="modal-links-row">
+      ${s.links.map(l => `<a href="${l.url}" target="_blank" class="modal-link-btn ${l.cls}">${l.label} ↗</a>`).join('')}
+      <a href="${s.wikiUrl}" target="_blank" class="modal-wiki-link">📖 Ver en GitHub Wiki ↗</a>
+    </div>
+  `;
+
   mbody.innerHTML = `
     <div class="modal-eyebrow">${s.num} &nbsp;·&nbsp; ${s.hito}</div>
     <div class="modal-title">${s.name}</div>
     <div class="modal-date">📅 ${s.date}</div>
     <div class="modal-tags">${s.tags.map(t=>`<span class="tag ${t.c}">${t.l}</span>`).join('')}</div>
     <div class="modal-section-title">Descripción</div>
-    <p style="font-size:14px;color:var(--text-mid);line-height:1.6;">${s.desc}</p>
+    <p style="font-size:14px;color:var(--text-mid);line-height:1.65;">${s.desc}</p>
     <div class="modal-section-title">Objetivos del Sprint</div>
     <ul class="modal-list">${s.objectives.map(o=>`<li>${o}</li>`).join('')}</ul>
     <div class="modal-section-title">Ceremonias Scrum</div>
@@ -770,76 +1179,7 @@ function openSprintModal(s) {
       <div class="modal-scrum-master-label">🎯 Scrum Master de este Sprint</div>
       <div class="modal-scrum-master-name">${s.sm}</div>
     </div>
-  `;
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-const HITO_DATA = {
-  h1: {
-    eyebrow: 'Hito 01 · 15% del trabajo',
-    title: 'Sprint 0: Planificación',
-    date: '13 de Mayo de 2026',
-    pct: '15%',
-    weight: 'Peso: 65% sobre Evaluación Continua 1',
-    desc: 'Primera entrega del proyecto. Se presenta el plan de proyecto, cronograma y el producto open source seleccionado.',
-    herramientas: ['GitHub Projects (tablero Kanban inicial)', 'GitHub Pages (presentación pública)'],
-    entregables: [
-      'Plan de proyecto y cronograma documentado',
-      'Selección y justificación de Krayips CRM',
-      'Repositorio GitHub configurado y organizado',
-      'Tablero Kanban con Product Backlog inicial',
-      'GitHub Pages publicada con información del proyecto',
-    ],
-  },
-  h2: {
-    eyebrow: 'Hito 02 · 60% del trabajo',
-    title: 'Sprints 1–2: Producto Funcionando',
-    date: '10 de Junio de 2026',
-    pct: '60%',
-    weight: 'Peso: 85% sobre Evaluación Continua 2',
-    desc: 'Producto de software funcionando con integración CI/CD DevOps e implementación completa del marco de trabajo ágil Scrum.',
-    herramientas: ['GitHub Actions (CI/CD)', 'GitHub Issues', 'GitHub Projects', 'GitHub Pages'],
-    entregables: [
-      'Historias de usuario implementadas y probadas',
-      'Pipeline CI/CD configurado y funcional',
-      'Tablero Kanban actualizado con avances reales',
-      'GitHub Pages con entorno de staging desplegado',
-      'Burndown Chart generado automáticamente',
-      'Documentación técnica en GitHub Wiki',
-    ],
-  },
-  h3: {
-    eyebrow: 'Hito 03 · 100% del trabajo',
-    title: 'Sprints 3–4: Entrega Final',
-    date: '13 de Julio de 2026',
-    pct: '100%',
-    weight: 'Peso: 100% sobre Evaluación Continua 3',
-    desc: 'Entrega completa: mejoras al software con despliegue CI/CD automatizado, documentación técnica de todo el proceso y artículo formato IEEE.',
-    herramientas: ['Todas las herramientas del ecosistema GitHub', 'Docker Compose', 'GitHub Actions (despliegue)'],
-    entregables: [
-      'Software con todas las mejoras implementadas',
-      'Despliegue CI/CD automatizado en servidor',
-      'Documentación técnica completa del proceso Scrum+DevOps',
-      'Artículo final en formato IEEE',
-      'Presentación del proyecto ante el docente',
-      'GitHub Pages con documentación pública completa',
-    ],
-  },
-};
-
-function openModal(id) {
-  const d = HITO_DATA[id];
-  mbody.innerHTML = `
-    <div class="modal-eyebrow">${d.eyebrow}</div>
-    <div class="modal-title">${d.title}</div>
-    <div class="modal-date">📅 ${d.date} &nbsp;·&nbsp; ${d.weight}</div>
-    <div class="modal-section-title">Descripción</div>
-    <p style="font-size:14px;color:var(--text-mid);line-height:1.6;">${d.desc}</p>
-    <div class="modal-section-title">Herramientas Requeridas</div>
-    <ul class="modal-list">${d.herramientas.map(h=>`<li>${h}</li>`).join('')}</ul>
-    <div class="modal-section-title">Entregables</div>
-    <ul class="modal-list">${d.entregables.map(e=>`<li>${e}</li>`).join('')}</ul>
+    ${linksHtml}
   `;
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
