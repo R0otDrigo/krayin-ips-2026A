@@ -1,18 +1,20 @@
 services:
   app:
-    image: ghcr.io/r0otdrigo/krayips-2026a:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "80:80"
-
     depends_on:
-      - mysql
-      - redis
-
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
     environment:
-      APP_ENV: production
-      APP_DEBUG: false
-      APP_URL: http://TU_IP
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_URL: http://localhost
 
       DB_CONNECTION: mysql
       DB_HOST: mysql
@@ -22,6 +24,7 @@ services:
       DB_PASSWORD: root
 
       REDIS_HOST: redis
+      REDIS_PORT: 6379
 
   mysql:
     image: mysql:8.0
@@ -31,6 +34,11 @@ services:
       MYSQL_DATABASE: krayin
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:6.2-alpine

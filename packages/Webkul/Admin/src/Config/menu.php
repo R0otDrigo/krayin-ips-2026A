@@ -6,7 +6,7 @@ return [
      */
     [
         'key' => 'dashboard',
-        'name' => 'admin::app.layouts.dashboard',
+        'name' => 'admin::app.layouts.dashboard-cambioCI',
         'route' => 'admin.dashboard.index',
         'sort' => 1,
         'icon-class' => 'icon-dashboard',
