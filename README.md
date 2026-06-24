@@ -127,3 +127,6 @@ A continuación se muestran capturas del panel administrativo del sistema, corre
 ## Licencia
 
 Este proyecto se basa en una distribución bajo licencia MIT y se utiliza con fines académicos para la implementación de prácticas de DevOps e integración continua.
+
+## modificacion para actions
+Preuba 1
