@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/r0otdrigo/krayips-2026a:latest
     restart: always
     ports:
       - "80:80"
