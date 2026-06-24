@@ -57,7 +57,7 @@ return [
             'forget-password-link' => 'Forget Password ?',
             'password' => 'Password',
             'submit-btn' => 'Sign In',
-            'title' => 'Sign In',
+            'title' => 'Krayips CRM - UNSA 2026A',
         ],
         'forget-password' => [
             'create' => [
