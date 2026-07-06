@@ -12,19 +12,13 @@
                     alt="{{ config('app.name') }}"
                 />
             @else
-                <img
-                    class="h-10 max-sm:hidden"
-                    src="{{ request()->cookie('dark_mode') ? vite()->asset('images/dark-logo.svg') : vite()->asset('images/logo.svg') }}"
-                    id="logo-image"
-                    alt="{{ config('app.name') }}"
-                />
+                <span class="text-xl font-bold text-brandColor max-sm:hidden">
+                    Proyecto IPS-Krayips
+                </span>
 
-                <img
-                    class="h-10 sm:hidden"
-                    src="{{ request()->cookie('dark_mode') ? vite()->asset('images/mobile-dark-logo.svg') : vite()->asset('images/mobile-light-logo.svg') }}"
-                    id="logo-image"
-                    alt="{{ config('app.name') }}"
-                />
+                <span class="text-lg font-bold text-brandColor sm:hidden">
+                    IPS-Krayips
+                </span>
             @endif
         </a>
     </div>

@@ -128,11 +128,11 @@
                         },
 
                         info: {
-                            container: 'border-left: 8px solid #0E90D9',
+                            container: 'border-left: 8px solid #800020',
 
-                            icon: 'color: #0E90D9',
+                            icon: 'color: #800020',
 
-                            stroke: '#0E90D9',
+                            stroke: '#800020',
                         },
                     },
 

@@ -14,11 +14,9 @@
                     alt="{{ config('app.name') }}"
                 />
             @else
-                <img
-                    class="w-max"
-                    src="{{ vite()->asset('images/logo.svg') }}"
-                    alt="{{ config('app.name') }}"
-                />
+                <span class="text-2xl font-bold text-brandColor">
+                    Proyecto IPS-Krayips
+                </span>
             @endif
 
             <div class="box-shadow flex min-w-[300px] flex-col rounded-md bg-white dark:bg-gray-900">

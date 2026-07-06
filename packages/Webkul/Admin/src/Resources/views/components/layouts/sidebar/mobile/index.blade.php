@@ -24,12 +24,9 @@
                         alt="{{ config('app.name') }}"
                     />
                 @else
-                    <img
-                        class="h-10"
-                        src="{{ request()->cookie('dark_mode') ? vite()->asset('images/dark-logo.svg') : vite()->asset('images/logo.svg') }}"
-                        id="logo-image"
-                        alt="{{ config('app.name') }}"
-                    />
+                    <span class="text-lg font-bold text-brandColor">
+                        Proyecto IPS-Krayips
+                    </span>
                 @endif
             </x-slot>
 
