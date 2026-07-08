@@ -24,13 +24,27 @@ fi
 
 echo "Esperando MySQL..."
 
-until php artisan migrate --force
+until php artisan tinker --execute="DB::connection()->getPdo();" > /dev/null 2>&1
 do
     echo "MySQL aún no está listo..."
     sleep 5
 done
 
-php artisan db:seed --force || true
+# Detectar primera instalación ANTES de migrar: los seeders de Krayin
+# borran tablas (users, roles, pipelines...), así que solo deben
+# ejecutarse una vez, nunca en reinicios del contenedor.
+if php artisan tinker --execute="echo Schema::hasTable('users') ? 'instalado' : 'primera';" | grep -q "primera"; then
+    FIRST_INSTALL=1
+else
+    FIRST_INSTALL=0
+fi
+
+php artisan migrate --force
+
+if [ "$FIRST_INSTALL" = "1" ]; then
+    echo "Primera instalación: ejecutando seeders..."
+    php artisan db:seed --force || true
+fi
 php artisan storage:link || true
 php artisan optimize || true
 
