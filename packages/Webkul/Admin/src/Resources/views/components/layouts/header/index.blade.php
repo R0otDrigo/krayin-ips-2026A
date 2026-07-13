@@ -4,7 +4,7 @@
         <!-- Sidebar Menu -->
         <x-admin::layouts.sidebar.mobile />
         
-        <a href="{{ route('admin.dashboard.index') }}">
+        <a href="{{ route('admin.dashboard.index') }}" class="flex items-center gap-2">
             @if ($logo = core()->getConfigData('general.general.admin_logo.logo_image'))
                 <img
                     class="h-10"
@@ -12,6 +12,12 @@
                     alt="{{ config('app.name') }}"
                 />
             @else
+                <img
+                    class="h-9 w-auto"
+                    src="{{ asset('images/logo-unsa.png') }}"
+                    alt="UNSA"
+                />
+
                 <span class="text-xl font-bold text-brandColor max-sm:hidden">
                     Proyecto IPS-Krayips
                 </span>

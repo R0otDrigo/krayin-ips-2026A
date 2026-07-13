@@ -14,9 +14,17 @@
                     alt="{{ config('app.name') }}"
                 />
             @else
-                <span class="text-2xl font-bold text-brandColor">
-                    Proyecto IPS-Krayips
-                </span>
+                <div class="flex items-center gap-3">
+                    <img
+                        class="h-14 w-auto"
+                        src="{{ asset('images/logo-unsa.png') }}"
+                        alt="UNSA"
+                    />
+
+                    <span class="text-2xl font-bold text-brandColor">
+                        Proyecto IPS-Krayips
+                    </span>
+                </div>
             @endif
 
             <div class="box-shadow flex min-w-[300px] flex-col rounded-md bg-white dark:bg-gray-900">
