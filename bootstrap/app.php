@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Necesario detrás del reverse proxy (Caddy) para que Laravel
+        // detecte HTTPS vía X-Forwarded-Proto y genere URLs correctas.
+        $middleware->trustProxies(at: '*');
+
         $middleware->append(CanInstall::class);
 
         $middleware->encryptCookies(except: [

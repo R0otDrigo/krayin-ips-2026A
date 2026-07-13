@@ -1,0 +1,7 @@
+# Reverse proxy para Krayips CRM.
+# DOMAIN se define en ~/krayips/.env del servidor:
+#   - Sin definir  -> ":80"  (HTTP plano, útil antes de tener dominio)
+#   - Con dominio  -> "krayips.me" (Caddy obtiene certificado Let's Encrypt solo)
+{$DOMAIN::80} {
+    reverse_proxy app:80
+}
